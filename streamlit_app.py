@@ -16,9 +16,10 @@ cnx = st.connection("snowflake")
 session = cnx.session()
 
 # Fetch fruit options from the database
-my_data_frame = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME')).collect()
+my_data_frame = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'), col('SEARCH_ON')).collect()
 fruit_options = [row["FRUIT_NAME"] for row in my_data_frame]  # Extract fruit names
-
+st.dataframe(data=my_data_frame, use_container_width=True)
+st.stop()
 # User selects ingredients
 ingredients_list = st.multiselect('Select up to 5 ingredients:', fruit_options, max_selections=5)
 
