@@ -25,14 +25,11 @@ ingredients_list = st.multiselect('Select up to 5 ingredients:', fruit_options, 
 if ingredients_list and name_on_order.strip():
     # Format ingredients as a comma-separated string
     ingredients_string = ', '.join(ingredients_list)
-
-    # Fetch data for each chosen fruit
     for fruit_chosen in ingredients_list:
-        smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{fruit_chosen.lower()}")
-        if smoothiefroot_response.status_code == 200:
-            sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
-        else:
-            st.error(f"Failed to fetch data for {fruit_chosen}")
+        ingredients_string += fruit_chosen + ' '
+        st.subheader(fruit_chosen + 'Nutrition Information')
+        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
     # Create the SQL insert statement
     my_insert_stmt = f"""
@@ -43,6 +40,10 @@ if ingredients_list and name_on_order.strip():
     st.write(my_insert_stmt)  # Show the generated SQL statement
 
     # Submit order button
-    if st.button('Submit Order'):
+    time_to_insert = st.button('Submit Order')
+
+    if time_to_insert:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is Ordered!', icon="✅")
+
+
